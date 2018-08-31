@@ -5704,12 +5704,12 @@ int main(void) {
   def test_emconfigure_js_o(self):
     # issue 2994
     for i in [0, 1, 2]:
-      for f in ['hello_world.c', 'files.cpp']:
-        print(i, f)
-        with env_modify({'EMCONFIGURE_JS': str(i)}):
+      with env_modify({'EMCONFIGURE_JS': str(i)}):
+        for f in ['hello_world.c', 'files.cpp']:
+          print(i, f)
           self.clear()
-          run_process([PYTHON, path_from_root('emconfigure'), PYTHON, EMCC, '-c', '-o', 'a.o', path_from_root('tests', f)])
-          run_process([PYTHON, EMCC, 'a.o'])
+          run_process([PYTHON, path_from_root('emconfigure'), PYTHON, EMCC, '-c', '-o', 'a.o', path_from_root('tests', f)], check=False, stderr=PIPE)
+          run_process([PYTHON, EMCC, 'a.o'], check=False, stderr=PIPE)
           if f == 'hello_world.c':
             if i == 0:
               assert not os.path.exists('a.out.js') # native .o, not bitcode!
